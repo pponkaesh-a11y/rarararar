@@ -192,3 +192,44 @@ end)
 
 local Tab = Window:NewTab("old wt")
 local Section = Tab:NewSection("нажми")
+Section:NewButton("ButtonText", "ButtonInfo", function()
+ local TeleportService = game:GetService("TeleportService")
+local HttpService = game:GetService("HttpService")
+local Players = game:GetService("Players")
+
+local PlaceId = 124195929639441 -- ID старой карты
+
+local function JoinAvailableServer()
+    print("🌑 Void: Поиск нового живого сервера...")
+
+    -- Запрашиваем список всех публичных серверов этого плейса
+    local sfUrl = "https://games.roblox.com/v1/games/" .. PlaceId .. "/servers/Public?sortOrder=Desc&limit=100"
+
+    local success, result = pcall(function()
+        return game:HttpGet(sfUrl)
+    end)
+
+    if success then
+        local data = HttpService:JSONDecode(result)
+
+        if data and data.data then
+            for _, server in pairs(data.data) do
+                -- Проверяем, что сервер не полный и это не тот, на котором мы (если вдруг мы уже там)
+                if server.playing < server.maxPlayers and server.id ~= game.JobId then
+                    print("✅ Void: Сервер найден! ID: " .. server.id)
+                    TeleportService:TeleportToPlaceInstance(PlaceId, server.id, Players.LocalPlayer)
+                    return
+                end
+            end
+        end
+
+        -- Если публичных серверов нет, пробуем зайти "напролом"
+        warn("⚠️ Void: Публичных серверов не найдено. Пробую Force Join...")
+        TeleportService:Teleport(PlaceId, Players.LocalPlayer)
+    else
+        warn("🛑 Ошибка при получении списка серверов: " .. tostring(result))
+    end
+end
+
+JoinAvailableServer()
+end)
