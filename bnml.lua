@@ -66,13 +66,29 @@ Section:NewToggle("Speed Hack (35)", "Увеличивает скорость б
 end)
 
 
-Section:NewToggle("Noclip", "Ходьба сквозь стены(сыро)", function(state)
-    for _, part in pairs(game.Players.LocalPlayer.Character:GetDescendants()) do
-        if part:IsA("BasePart") then
-            part.CanCollide = not state
+-- Бинд на клавиши
+Section:NewKeybind("KeybindText", "KeybindInfo", Enum.KeyCode.X, function()
+	local RunService = game:GetService("RunService")
+local player = game.Players.LocalPlayer
+local endTime = tick() + 3 -- Устанавливаем время завершения (через 3 секунды)
+
+local connection
+connection = RunService.Stepped:Connect(function()
+    if tick() < endTime then
+        if player.Character then
+            for _, part in pairs(player.Character:GetDescendants()) do
+                if part:IsA("BasePart") then
+                    part.CanCollide = false
+                end
+            end
         end
+    else
+        connection:Disconnect() -- Отключаем скрипт через 3 секунды
     end
 end)
+
+end)
+
 
 
 local Tab = Window:NewTab("legit")
