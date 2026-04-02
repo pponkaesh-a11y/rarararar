@@ -67,7 +67,7 @@ end)
 
 
 -- Бинд на клавиши
-Section:NewKeybind("KeybindText", "KeybindInfo", Enum.KeyCode.X, function()
+Section:NewKeybind("noclip(работает 3 секунды)", "KeybindInfo", Enum.KeyCode.X, function()
 	local RunService = game:GetService("RunService")
 local player = game.Players.LocalPlayer
 local endTime = tick() + 3 -- Устанавливаем время завершения (через 3 секунды)
