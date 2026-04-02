@@ -192,6 +192,7 @@ end)
 
 local Tab = Window:NewTab("old wt")
 local Section = Tab:NewSection("нажми")
+
 Section:NewButton("ButtonText", "ButtonInfo", function()
  local TeleportService = game:GetService("TeleportService")
 local HttpService = game:GetService("HttpService")
