@@ -89,7 +89,11 @@ end)
 
 end)
 
-
+Section:NewSlider("быстрый ап", "SliderInfo", 500, 0, function(promt) -- 500 (Макс. значение) | 0 (Мин. значение)
+    game:GetService("ProximityPromptService").PromptButtonHoldBegan:Connect(function(prompt)
+    prompt.HoldDuration = 0
+end)
+end)
 
 local Tab = Window:NewTab("legit")
 local Section = Tab:NewSection("лодаут(берется только 2)")
