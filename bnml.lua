@@ -1,5 +1,5 @@
 local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/Robojini/Tuturial_UI_Library/main/UI_Template_1"))()
-local Window = Library.CreateLib("bnml hub (version 0.5 beta )", "RJTheme7")
+local Window = Library.CreateLib(" hub (version 0.5 beta )", "RJTheme7")
 local Tab = Window:NewTab("main")
 local Section = Tab:NewSection("тп")
 local player = game.Players.LocalPlayer
