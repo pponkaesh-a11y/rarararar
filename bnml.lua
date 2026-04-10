@@ -14,6 +14,10 @@ local mouse = player:GetMouse()
 local userInputService = game:GetService("UserInputService")
 local tpEnabled = false
 
+local savedCFrame = nil
+local tpKey = Enum.KeyCode.Z -- Клавиша телепортации
+
+
 local Toggle = Tab:CreateToggle({
    Name = "клик тп",
    CurrentValue = false,
@@ -32,6 +36,56 @@ mouse.Button1Down:Connect(function()
         end
     end
 end)
+
+
+local positionsHistory = {} 
+local tpKey = Enum.KeyCode.Z
+
+
+Tab:CreateButton({
+   Name = "Записать новую точку (Создать запись)",
+   Callback = function()
+      local char = game.Players.LocalPlayer.Character
+      if char and char:FindFirstChild("HumanoidRootPart") then
+          local currentPos = char.HumanoidRootPart.CFrame
+          table.insert(positionsHistory, currentPos)
+          
+          Rayfield:Notify({
+             Title = "Записано!",
+             Content = "жми на z чтоб тпнуться",
+             Duration = 2,
+             Image = 4483362458
+          })
+      end
+   end,
+})
+
+
+game:GetService("UserInputService").InputBegan:Connect(function(input, processed)
+    if processed then return end
+    
+    if input.KeyCode == tpKey then
+        local char = game.Players.LocalPlayer.Character
+        if char and char:FindFirstChild("HumanoidRootPart") then
+       
+            if #positionsHistory > 0 then
+                local lastIndex = #positionsHistory
+                char.HumanoidRootPart.CFrame = positionsHistory[lastIndex]
+            else
+                Rayfield:Notify({
+                   Title = "Пусто",
+                   Content = "Нет сохраненных переменных!",
+                   Duration = 2
+                })
+            end
+        end
+    end
+end)
+
+
+
+
+
 local Button = Tab:CreateButton({
    Name = "тп на товеры",
    Callback = function()
@@ -106,40 +160,60 @@ local Toggle = Tab:CreateToggle({
    end,
 })
 
-local Keybind = Tab:CreateKeybind({
-   Name = "Noclip (работает 3 секунды)",
-   CurrentKeybind = "X",
-   HoldToInteract = false,
-   Flag = "NoclipKeybind", 
-   Callback = function(Keybind)
-    
-      local RunService = game:GetService("RunService")
-      local player = game.Players.LocalPlayer
-      local endTime = tick() + 3 
+local NoclipConnection = nil
 
-      local connection
-      connection = RunService.Stepped:Connect(function()
-          if tick() < endTime then
-              if player.Character then
-                  for _, part in pairs(player.Character:GetDescendants()) do
-                      if part:IsA("BasePart") then
-                          part.CanCollide = false
-                      end
+Tab:CreateToggle({
+   Name = "Noclip (Сквозь стены)",
+   CurrentValue = false,
+   Flag = "NoclipToggle", 
+   Callback = function(Value)
+      if Value then
+         -- ВКЛЮЧАЕМ NOCLIP
+         NoclipConnection = game:GetService("RunService").Stepped:Connect(function()
+            local character = game.Players.LocalPlayer.Character
+            if character then
+               for _, part in pairs(character:GetDescendants()) do
+                  if part:IsA("BasePart") then
+                     part.CanCollide = false
                   end
-              end
-          else
-              connection:Disconnect() 
-          end
-      end)
-      
-      Rayfield:Notify({
-         Title = "Noclip",
-         Content = "Активирован на 3 секунды!",
-         Duration = 2,
-         Image = 4483362458,
-      })
+               end
+            end
+         end)
+         
+         Rayfield:Notify({
+            Title = "Noclip",
+            Content = "Активирован",
+            Duration = 2,
+            Image = 4483362458,
+         })
+      else
+         -- ВЫКЛЮЧАЕМ NOCLIP
+         if NoclipConnection then
+            NoclipConnection:Disconnect()
+            NoclipConnection = nil
+         end
+         
+         -- Возвращаем коллизию (опционально, персонаж сам обновит её через секунду)
+         local character = game.Players.LocalPlayer.Character
+         if character then
+            for _, part in pairs(character:GetDescendants()) do
+               if part:IsA("BasePart") then
+                  part.CanCollide = true
+               end
+            end
+         end
+
+         Rayfield:Notify({
+            Title = "Noclip",
+            Content = "Деактивирован",
+            Duration = 2,
+            Image = 4483362458,
+         })
+      end
    end,
 })
+
+
 local Tab = Window:CreateTab("legit", 4483362458) 
 local InstantInteract = false
 
