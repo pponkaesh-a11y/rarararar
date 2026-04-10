@@ -213,6 +213,39 @@ Tab:CreateToggle({
    end,
 })
 
+Tab:CreateSection("камера")
+
+local Tab = Window:CreateTab("Main", 4483362458) -- Иконка настроек
+
+-- Устанавливаем начальное значение
+getgenv().Resolution = 1
+
+local Slider = Tab:CreateSlider({
+   Name = "Resolution (Stretched)",
+   Range = {0.1, 2},
+   Increment = 0.01,
+   Suffix = "Scale",
+   CurrentValue = 0.64,
+   Flag = "ResSlider", 
+   Callback = function(Value)
+      getgenv().Resolution = Value
+   end,
+})
+
+-- Основной цикл работы камеры
+local Camera = workspace.CurrentCamera
+game:GetService("RunService").RenderStepped:Connect(function()
+    if getgenv().Resolution then
+        Camera.CFrame = Camera.CFrame * CFrame.new(0, 0, 0, 1, 0, 0, 0, getgenv().Resolution, 0, 0, 0, 1)
+    end
+end)
+
+
+
+
+
+
+
 
 local Tab = Window:CreateTab("legit", 4483362458) 
 local InstantInteract = false
