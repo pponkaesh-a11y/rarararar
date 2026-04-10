@@ -215,7 +215,6 @@ Tab:CreateToggle({
 
 Tab:CreateSection("камера")
 
-local Tab = Window:CreateTab("Main", 4483362458) -- Иконка настроек
 
 -- Устанавливаем начальное значение
 getgenv().Resolution = 1
